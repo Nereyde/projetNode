@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  h1= title
+
+  p Editer l'utilisateur :
+
+  form(action=action method='post')
+    table(border=1)
+      tr
+        th Id
+        td= user.rowid
+      tr
+        th Pseudo
+        td
+          input(name='pseudo' value=user.pseudo)
+      tr
+        th Prénom
+        td
+          input(name='firstname' value=user.firstname)
+      tr
+        th Email
+        td
+          input(name='email' value=user.email)
+
+    input(type='submit', value='Envoyer')
