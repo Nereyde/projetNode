@@ -1,30 +1,42 @@
 const db = require('sqlite')
+const bcrypt = require('bcryptjs')
 
 module.exports = {
   get: (userId) => {
     return db.get('SELECT rowid, * FROM users WHERE rowid = ?', userId)
   },
 
-  count: () => {
-    return db.get('SELECT COUNT(*) as count FROM users')
-  },
-
   getAll: (limit, offset) => {
     return db.all('SELECT rowid, * FROM users LIMIT ? OFFSET ?', limit, offset)
   },
 
+  getByPseudo: (pseudo) => {
+    return db.get('SELECT rowid, * FROM users WHERE pseudo = ?', pseudo)
+  },
+
+  getId: (token) => {
+    return Session.exists(accessToken).then((result) => {return result.userId})
+  },
+
+  count: () => {
+    return db.get('SELECT COUNT(*) as count FROM users')
+  },
+
   insert: (params) => {
+    let hash = bcrypt.hashSync(params.password)
     return db.run(
-      'INSERT INTO users (pseudo, email, firstname, createdAt) VALUES (?, ?, ?, ?)',
+      'INSERT INTO users (pseudo, email, password, firstname, createdAt) VALUES (?, ?, ?, ?, ?)',
       params.pseudo,
       params.email,
+      hash,
       params.firstname,
       Date.now()
     )
   },
 
   update: (userId, params) => {
-    const POSSIBLE_KEYS = [ 'pseudo', 'email', 'firstname' ]
+    let hash = bcrypt.hashSync(params.password)
+    const POSSIBLE_KEYS = [ 'pseudo', 'email', 'password', 'firstname' ]
 
     let dbArgs = []
     let queryArgs = []
@@ -51,7 +63,7 @@ module.exports = {
 
     //db.run.apply(db, query, dbArgs)
     return db.run(query, dbArgs).then((stmt) => {
-      // Ici je vais vérifier si l'updata a bien changé une ligne en base
+      // Ici je vais vérifier si l'update a bien changé une ligne en base
       // Dans le cas contraire, cela voudra dire qu'il n'y avait pas d'utilisateur
       // Avec db.run, la paramètre passé dans le callback du then, est le `statement`
       // qui contiendra le nombre de lignes éditées en base

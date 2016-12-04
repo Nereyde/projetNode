@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+  h1= title
+
+  p Connexion :
+    br
+    em= message
+
+  form(action=action method='post')
+    table(border=1)
+      tr
+        th Pseudo
+        td
+          input(name='pseudo')
+      tr
+        th Password
+        td
+          input(name='password' type='password')
+
+    input(type='submit', value='Envoyer')
+
+  P Pas de compte ? Inscrivez vous 
+    a(href="users/add") ici

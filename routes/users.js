@@ -88,6 +88,7 @@ router.get('/:userId(\\d+)', (req, res, next) => {
 router.post('/', (req, res, next) => {
   if (
     !req.body.pseudo || req.body.pseudo === '' ||
+    !req.body.password || req.body.password === '' ||
     !req.body.email || req.body.email === '' ||
     !req.body.firstname || req.body.firstname === ''
   ) {

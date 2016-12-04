@@ -7,10 +7,23 @@ const bodyParser = require('body-parser')
 const sass = require('node-sass-middleware')
 const db = require('sqlite')
 const methodOverride = require('method-override')
+const cookieParser = require('cookie-parser')
+
+const Redis = require('ioredis')
+const redis = new Redis()
+
+const mongoose = require('mongoose')
+
 
 // Constantes et initialisations
 const PORT = process.PORT || 8080
 const app = express()
+
+//Ouverture de la BDD MongoDB avec mongoose
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost/todos', function(err) {
+  if (err) { throw err }
+})
 
 // Mise en place des vues
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +47,64 @@ app.use(methodOverride('_method', {methods: ['GET', 'POST']}))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.use(cookieParser())
+
+//Middleware pour la connexion. Cela empêchera tout utilisateur non identifié à atteindre les autres pages. Il pourra malgré tout pouvoir créer un utilsateur pour avoir un compte auquel se connecter.
+app.use((req, res, next) => {
+  if ((req.url == '/sessions' || req.url == '/users/add') && (req.method == 'GET' || req.method == 'POST' || req.method == 'DELETE')) {
+    next()
+  }else{
+    if (req.cookies.accessToken || req.headers['x-accesstoken']) {
+      var accessToken = req.cookies.accessToken
+      if (!accessToken) accessToken = req.headers['x-accesstoken']
+
+      redis.hgetall('token:'+accessToken).then((result) => {
+        if (result && result != "") {
+          if (result['expiresAt'] > Date.now()) {
+            next()
+          }else{
+            res.format({
+              html: () => {
+                res.redirect('/sessions')
+              },
+              json: () => {
+                let err = new Error('Unauthorized')
+                err.status = 401
+                next(err)
+              }
+            })
+          }
+        }else{
+          res.format({
+            html: () => {
+              res.redirect('/sessions')
+            },
+            json: () => {
+              let err = new Error('Unauthorized')
+              err.status = 401
+              next(err)
+            }
+          })
+        }
+      })
+    }else{
+      res.format({
+        html: () => {
+          res.redirect('/sessions')
+        },
+        json: () => {
+          let err = new Error('Unauthorized')
+          err.status = 401
+          next(err)
+        }
+      })
+    }
+  }
+})
+
 // La liste des différents routeurs (dans l'ordre)
+app.use('/sessions', require('./routes/sessions'))
+app.use('/todos', require('./routes/todos'))
 app.use('/', require('./routes/index'))
 app.use('/users', require('./routes/users'))
 
@@ -71,7 +141,10 @@ app.use(function(err, req, res, next) {
 
 db.open('bdd.db').then(() => {
   console.log('> BDD opened')
-  return db.run('CREATE TABLE IF NOT EXISTS users (pseudo, email, firstname, createdAt)')
+  return Promise.all([
+    db.run('CREATE TABLE IF NOT EXISTS users (pseudo, email, password, firstname, createdAt)'),
+    db.run('CREATE TABLE IF NOT EXISTS sessions (userId, accessToken, createdAt, expiresAt)')
+  ])
 }).then(() => {
   console.log('> Tables persisted')
 

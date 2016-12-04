@@ -1,7 +1,10 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/css/style.css')
-  body
-    block content
+	head
+		title= title
+		link(rel='stylesheet', href='/css/style.css')
+	body
+		form(method="post", class="logout" action= "/sessions?_method=DELETE")
+			input(type="submit", value="Deconnexion")
+
+	block content

@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+  h1= title
+
+  p Voici la liste des utilisateurs :
+
+  table(border=1)
+    tr
+      th Id
+      th UserId
+      th Topic
+      th completedAt
+
+    each todo in list
+      tr
+        td= todo.todoId
+        td= todo.userId
+        td= todo.topic
+        td= todo.completedAt
+        td
+          ul
+            li
+              a(href="/todos/" + user.rowid) Voir
+            li
+              a(href="/todos/" + user.rowid + '/edit') Éditer
+            li
+              a(href="/todos/" + user.rowid + '?_method=delete') Supprimer
+
+  ul.pagination
+    - var nbPage = Math.ceil(count / limit)
+    - for (var i = 0; i < nbPage; i++) {
+      li
+        a(href='/todos?limit=' + limit + '&offset=' + (i*limit)) Page #{i + 1}
+    - }

@@ -21,6 +21,10 @@ block content
       tr
         th Email
         td
-          input(name='email' value=user.email)
+          input(name='email' type='email' value=user.email)
+      tr
+        th Password
+        td
+          input(name='password' type='password' value=user.password)
 
     input(type='submit', value='Envoyer')
