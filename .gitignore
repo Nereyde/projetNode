@@ -31,3 +31,4 @@ npm-debug.log
 
 # Ignore compiled assets
 assets/css/*.css
+*.db
