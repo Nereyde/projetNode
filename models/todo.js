@@ -25,9 +25,7 @@ module.exports = {
   },
 
   list: (userId) => {
-    var todo = Todo.find(null)
-    todo.where('userId', userId)
-    return todo.exec() 
+    return Todo.find({userId: userId}).exec()
   },
 
   completed: (todoId) => {

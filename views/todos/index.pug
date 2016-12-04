@@ -5,27 +5,25 @@ block content
 
   p Voici la liste des utilisateurs :
 
-  table(border=1)
-    tr
-      th Id
-      th UserId
-      th Topic
-      th completedAt
-
-    each todo in list
+  form(action='/todos/complete' method='post')
+    table(border=1)
       tr
-        td= todo.todoId
-        td= todo.userId
-        td= todo.topic
-        td= todo.completedAt
-        td
-          ul
-            li
-              a(href="/todos/" + user.rowid) Voir
-            li
-              a(href="/todos/" + user.rowid + '/edit') Éditer
-            li
-              a(href="/todos/" + user.rowid + '?_method=delete') Supprimer
+        th Check
+        th Id
+        th UserId
+        th Topic
+        th completedAt
+
+      each todo in list
+        tr
+          td
+            input(type='checkbox' name="completed" value=todo.todoId)
+          td= todo.todoId
+          td= todo.userId
+          td= todo.topic
+          td= todo.completedAt
+
+    input(type='submit', value='Supprimer séléctionné(s)')
 
   ul.pagination
     - var nbPage = Math.ceil(count / limit)
@@ -33,3 +31,13 @@ block content
       li
         a(href='/todos?limit=' + limit + '&offset=' + (i*limit)) Page #{i + 1}
     - }
+
+  form(action='/todos/add' method='post')
+    table(border=1)
+      tr
+        th Topic
+        td
+          input(name='topic')
+
+    input(type='submit', value='Envoyer')
+

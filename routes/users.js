@@ -15,8 +15,6 @@ router.get('/', (req, res, next) => {
     User.getAll(limit, offset),
     User.count()
   ]).then((results) => {
-    // results[0] => [user, user, user]
-    // results[1] => {count: ?}
     res.format({
       html: () => {
         res.render('users/index', {
@@ -63,7 +61,7 @@ router.get('/add', (req, res, next) => {
     html: () => {
       res.render('users/edit', {
         user: {},
-        action: '/users'
+        action: '/users/add'
       })
     },
     json: () => {
@@ -85,7 +83,7 @@ router.get('/:userId(\\d+)', (req, res, next) => {
   }).catch(next)
 })
 
-router.post('/', (req, res, next) => {
+router.post('/add', (req, res, next) => {
   if (
     !req.body.pseudo || req.body.pseudo === '' ||
     !req.body.password || req.body.password === '' ||

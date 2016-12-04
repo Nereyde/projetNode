@@ -9,6 +9,8 @@ const db = require('sqlite')
 const methodOverride = require('method-override')
 const cookieParser = require('cookie-parser')
 
+const Session = require('./models/session')
+
 const Redis = require('ioredis')
 const redis = new Redis()
 
@@ -51,14 +53,15 @@ app.use(cookieParser())
 
 //Middleware pour la connexion. Cela empêchera tout utilisateur non identifié à atteindre les autres pages. Il pourra malgré tout pouvoir créer un utilsateur pour avoir un compte auquel se connecter.
 app.use((req, res, next) => {
-  if ((req.url == '/sessions' || req.url == '/users/add') && (req.method == 'GET' || req.method == 'POST' || req.method == 'DELETE')) {
+  if ((req.url == '/sessions') && (req.method == 'GET' || req.method == 'POST' || req.method == 'DELETE')) {
     next()
   }else{
     if (req.cookies.accessToken || req.headers['x-accesstoken']) {
       var accessToken = req.cookies.accessToken
       if (!accessToken) accessToken = req.headers['x-accesstoken']
 
-      redis.hgetall('token:'+accessToken).then((result) => {
+      //redis.hgetall('token:'+accessToken).then((result) => {
+      Session.exists(accessToken).then((result) => {
         if (result && result != "") {
           if (result['expiresAt'] > Date.now()) {
             next()

@@ -68,7 +68,7 @@ router.post('/', (req, res, next) => {
             Session.add(user.rowid, token).then(() => {
               res.format({
                 html: () => {
-                  res.cookie('accessToken', token, {expires: new Date(Date.now() + 3600000), httpOnly: true })
+                  res.cookie('accessToken', token, {httpOnly: true })
                   res.redirect('/')
                 },
                 json: () => {

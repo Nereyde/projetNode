@@ -4,7 +4,7 @@ const redis = new Redis()
 module.exports = {
 	add: (userId, token) => {
 		var createdAt = Date.now()
-  		var expiresAt = (Date.now() + 600000)
+  		var expiresAt = (Date.now() + 3600000)
   		return redis.hmset('token:'+token, 'userId', userId, 'createdAt', createdAt, 'expiresAt', expiresAt)
 	},
 
