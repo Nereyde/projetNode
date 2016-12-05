@@ -24,7 +24,7 @@ Simple ExpressJS skeleton.
 	
 	/users - Liste les différents Users
 	/users/add - Permet d'ajouter un User
-	/users/?id - Permet d'avoir plus d'information sur le User possedant l'id "?id"
+	/users/?id - Permet d'avoir plus d'informations sur le User possédant l'id "?id"
 	
 	/todos - Liste tous les Todos du User connecté
 	/todos/add - Permet d'ajouter un Todo pour le User connecté
