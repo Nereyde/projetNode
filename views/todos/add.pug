@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+
+  p Voici la liste des utilisateurs :
+
+  form(action='/todos/add' method='post')
+    table(border=1)
+      tr
+        th Topic
+        td
+          input(name='topic')
+
+    input(type='submit', value='Envoyer')
+

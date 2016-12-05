@@ -2,28 +2,28 @@ const db = require('sqlite')
 const bcrypt = require('bcryptjs')
 
 module.exports = {
-  get: (userId) => {
+  get: (userId) => {                                                      //Récupère un User avec ses informations, grâce à son ID
     return db.get('SELECT rowid, * FROM users WHERE rowid = ?', userId)
   },
 
-  getAll: (limit, offset) => {
+  getAll: (limit, offset) => {                                                    //Récupère tous les users, en fonction de la limite qui est passé en paramètre
     return db.all('SELECT rowid, * FROM users LIMIT ? OFFSET ?', limit, offset)
   },
 
-  getByPseudo: (pseudo) => {
+  getByPseudo: (pseudo) => {                                                      //Récupère un User avec ses informations, grâce à son pseudo
     return db.get('SELECT rowid, * FROM users WHERE pseudo = ?', pseudo)
   },
 
-  getId: (token) => {
+  getId: (token) => {                                                             //Récupère l'ID de l'utilisateur connecté
     return Session.exists(accessToken).then((result) => {return result.userId})
   },
 
-  count: () => {
+  count: () => {                                              //Compte le nombre d'utilisateur
     return db.get('SELECT COUNT(*) as count FROM users')
   },
 
-  insert: (params) => {
-    let hash = bcrypt.hashSync(params.password)
+  insert: (params) => {                                       //Insère un utilisateur dans la base de donnée
+    let hash = bcrypt.hashSync(params.password)               //Fonction pour hash le mot de passe.
     return db.run(
       'INSERT INTO users (pseudo, email, password, firstname, createdAt) VALUES (?, ?, ?, ?, ?)',
       params.pseudo,
@@ -34,7 +34,7 @@ module.exports = {
     )
   },
 
-  update: (userId, params) => {
+  update: (userId, params) => {                               //Fonction modifiant un utilisateur
     let hash = bcrypt.hashSync(params.password)
     const POSSIBLE_KEYS = [ 'pseudo', 'email', 'password', 'firstname' ]
 
@@ -80,7 +80,7 @@ module.exports = {
     })
   },
 
-  remove: (userId) => {
+  remove: (userId) => {                                           //Supprime un utilisateur grâce à son ID
     return db.run('DELETE FROM users WHERE rowid = ?', userId)
   }
 }

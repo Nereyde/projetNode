@@ -1,29 +1,41 @@
 extends ../layout
 
 block content
-  h1= title
+  h1 Voici la liste des TODOS :
 
-  p Voici la liste des utilisateurs :
-
-  form(action='/todos/complete' method='post')
-    table(border=1)
+  form(action='/todos/completed' method='post')
+    table(border=1) 
+      p TO DO
       tr
         th Check
-        th Id
         th UserId
         th Topic
-        th completedAt
 
-      each todo in list
+      each todo in listNotCompleted
         tr
           td
             input(type='checkbox' name="completed" value=todo.todoId)
-          td= todo.todoId
+          td= todo.userId
+          td= todo.topic
+
+    input(type='submit', value='Marquer comme fini')        
+
+    table(border=1) 
+      p Completed :
+      tr
+        th Check
+        th UserId
+        th Topic
+        th completedAt    
+      each todo in listCompleted
+        tr
+          td
+            input(type='checkbox' name="completed" value=todo.todoId)
           td= todo.userId
           td= todo.topic
           td= todo.completedAt
 
-    input(type='submit', value='Supprimer séléctionné(s)')
+    input(type='submit', value='Marquer comme non fini')
 
   ul.pagination
     - var nbPage = Math.ceil(count / limit)
@@ -31,13 +43,3 @@ block content
       li
         a(href='/todos?limit=' + limit + '&offset=' + (i*limit)) Page #{i + 1}
     - }
-
-  form(action='/todos/add' method='post')
-    table(border=1)
-      tr
-        th Topic
-        td
-          input(name='topic')
-
-    input(type='submit', value='Envoyer')
-

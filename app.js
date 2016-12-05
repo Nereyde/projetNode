@@ -56,22 +56,21 @@ app.use((req, res, next) => {
   if ((req.url == '/sessions') && (req.method == 'GET' || req.method == 'POST' || req.method == 'DELETE')) {
     next()
   }else{
-    if (req.cookies.accessToken || req.headers['x-accesstoken']) {
-      var accessToken = req.cookies.accessToken
-      if (!accessToken) accessToken = req.headers['x-accesstoken']
+    if (req.cookies.accessToken || req.headers['x-accesstoken']) {    //On check si le cookie existe
+      var accessToken = req.cookies.x-accesstoken                     //on stock le cookie
+      if (!accessToken) accessToken = req.headers['x-accesstoken']    
 
-      //redis.hgetall('token:'+accessToken).then((result) => {
-      Session.exists(accessToken).then((result) => {
-        if (result && result != "") {
-          if (result['expiresAt'] > Date.now()) {
-            next()
+      Session.exists(accessToken).then((result) => {            //On récupère les informations de la session grâce au token
+        if (result && result != "") {                           //Si la session exist, on continue
+          if (result['expiresAt'] > Date.now()) {               
+            next()                                              //On passe à la suite des routes si jamais la session n'est pas expiré
           }else{
             res.format({
               html: () => {
-                res.redirect('/sessions')
+                res.redirect('/sessions')                       //Si la session est expirée, on redirige l'utilisateur vers la page de connexion
               },
               json: () => {
-                let err = new Error('Unauthorized')
+                let err = new Error('Unauthorized')             //Et on envoit une error 401, qui signifie que l'utilisateur n'est pas autorisé.
                 err.status = 401
                 next(err)
               }
@@ -80,10 +79,10 @@ app.use((req, res, next) => {
         }else{
           res.format({
             html: () => {
-              res.redirect('/sessions')
+              res.redirect('/sessions')                         //Si la session n'existe pas, on redirige l'utilisateur vers la page de connexion
             },
             json: () => {
-              let err = new Error('Unauthorized')
+              let err = new Error('Unauthorized')               //Et on envoit une error 401, qui signifie que l'utilisateur n'est pas autorisé.
               err.status = 401
               next(err)
             }
@@ -93,10 +92,10 @@ app.use((req, res, next) => {
     }else{
       res.format({
         html: () => {
-          res.redirect('/sessions')
+          res.redirect('/sessions')                              //S'il n'y a pas de cookie, on redirige l'utilisateur vers la page de connexion
         },
         json: () => {
-          let err = new Error('Unauthorized')
+          let err = new Error('Unauthorized')                    //Et on envoit une error 401, qui signifie que l'utilisateur n'est pas autorisé.
           err.status = 401
           next(err)
         }
@@ -142,6 +141,8 @@ app.use(function(err, req, res, next) {
   })
 })
 
+
+//Ouverture de toutes les BDD, dans une Promise.all, pour s'assurer que les BDD soient bien toutes ouvertes avant de passer à la suite.
 db.open('bdd.db').then(() => {
   console.log('> BDD opened')
   return Promise.all([
@@ -151,6 +152,8 @@ db.open('bdd.db').then(() => {
 }).then(() => {
   console.log('> Tables persisted')
 
+
+//Démarage du serveur
   app.listen(PORT, () => {
     console.log('> Serveur démarré sur le port : ', PORT)
   })
