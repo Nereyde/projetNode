@@ -57,7 +57,7 @@ app.use((req, res, next) => {
     next()
   }else{
     if (req.cookies.accessToken || req.headers['x-accesstoken']) {    //On check si le cookie existe
-      var accessToken = req.cookies.x-accesstoken                     //on stock le cookie
+      var accessToken = req.cookies.accessToken                   //on stock le cookie
       if (!accessToken) accessToken = req.headers['x-accesstoken']    
 
       Session.exists(accessToken).then((result) => {            //On récupère les informations de la session grâce au token
