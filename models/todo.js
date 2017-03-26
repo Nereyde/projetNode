@@ -36,7 +36,7 @@ module.exports = {
     return Todo.find({userId: userId, completed: false})
   },
 
-  changeState: (todoId) => {        //Change l'état d'un todo à Complété s'il ne l'est pas, et à non complété s'il l'était.
+  changeState: (todoId) => {        //Change l'état d'un to do à Complété
     return Todo.update(
       {todoId: todoId},
       {$set: {

@@ -115,23 +115,24 @@ router.post('/add', (req, res, next) => {                         //Cette route 
 
 /*
 
-Cette route est appelé quand un utilisateur check un todo et souhaite changé son statut
-(passé de Completed à Not completed et inversement)
-J'ai malheureusement un gros problème du à la fonction changeState qui, apparement, ne renvoit rien.
+Cette route est appelé quand un utilisateur check un todo et souhaite changer son statut
+(Passer de Completed à Not completed)
+J'ai eu un gros problème du à la fonction changeState qui, apparement, ne renvoyait rien.
 J'ai longtemps essayé de l'implémenter coorectement et de la faire marcher, mais sans succès.
-J'ai réussi une seule fois à changé l'état d'un Todo.*/
+J'ai donc décidé d'essayer de l'implémenter seulement pour qu'elle passe de 'not completed' à 'completed'.
+Et là ça à marché. Donc je le laisse comme ça, et je ne suis malheuresement pas en capacité de passer une tâche à 'not completed'*/
 
 
 router.post('/completed', (req, res, next) => {
   Session.getUserId(Session.getToken(req)).then((userId) => {     //Récupère l'ID du User connecté
       if(userId){
       if(typeof req.body.completed == "object"){                  //Ici, on test le type de que l'on a récupéré du formulaire. Si l'utilisateur à coché au moins deux cases, le résultat sera un objet.
-        //for each                                                //Si il y a plusieurs cases coché, il faut récupérer tous les IDs des todos dans l'objet pour changer leur état.
+        //for each                                                //Si il y a plusieurs cases coché, il faut récupérer tous les IDs des todos dans l'objet pour changer leur état. ==> Je n'ai pas réussi à l'implémenter
       }else if(typeof req.body.completed == "string"){            //Si c'est un string, cela veut dire qu'une seule case a été coché
-          Todo.changeState(req.body.completed).then(() => {   //Nous procédons donc au changement d'état du todo en passant son ID
+          Todo.changeState(req.body.completed).then(() => {       //Nous procédons donc au changement d'état du todo en passant son ID
               res.format({
             html: () => {
-              res.redirect('/todos')                              //On redirige ensuite l'utilisateurs vers la liste de ses todos
+              res.redirect('/todos')                              //On redirige ensuite l'utilisateur vers la liste de ses todos
             },
             json: () => {
               res.status(201).send({message: 'success'})          //On envoit un status 201 en Json pour montrer la réussite de la requête
@@ -156,7 +157,7 @@ router.post('/completed', (req, res, next) => {
           res.redirect('/')                        //On redirige l'utilisateur vers l'accueil si nous n'avons pas trouvé d'utilisateur connecté. (Cela ne devrait d'ailleurs pas arriver étant donné l'incapacité d'un utilisateur non connecté à aller sur une autre page que celle de la connexion)
         },
         json: () => {
-          let err = new Error('Bad Request')       //Et on envoit une error 400 en Json
+          let err = new Error('Bad Request')       //Et on envois une error 400 en Json
           err.status = 400
           next(err)
         }
