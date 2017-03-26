@@ -119,17 +119,17 @@ Cette route est appelé quand un utilisateur check un todo et souhaite changé s
 (passé de Completed à Not completed et inversement)
 J'ai malheureusement un gros problème du à la fonction changeState qui, apparement, ne renvoit rien.
 J'ai longtemps essayé de l'implémenter coorectement et de la faire marcher, mais sans succès.
-J'ai réussi une seule fois à changé l'état d'un Todo.
+J'ai réussi une seule fois à changé l'état d'un Todo.*/
 
 
 router.post('/completed', (req, res, next) => {
   Session.getUserId(Session.getToken(req)).then((userId) => {     //Récupère l'ID du User connecté
-    if(userId){
+      if(userId){
       if(typeof req.body.completed == "object"){                  //Ici, on test le type de que l'on a récupéré du formulaire. Si l'utilisateur à coché au moins deux cases, le résultat sera un objet.
         //for each                                                //Si il y a plusieurs cases coché, il faut récupérer tous les IDs des todos dans l'objet pour changer leur état.
       }else if(typeof req.body.completed == "string"){            //Si c'est un string, cela veut dire qu'une seule case a été coché
-        Todo.changeState(req.body.completed).then((object) => {   //Nous procédons donc au changement d'état du todo en passant son ID
-          res.format({
+          Todo.changeState(req.body.completed).then(() => {   //Nous procédons donc au changement d'état du todo en passant son ID
+              res.format({
             html: () => {
               res.redirect('/todos')                              //On redirige ensuite l'utilisateurs vers la liste de ses todos
             },
@@ -164,8 +164,5 @@ router.post('/completed', (req, res, next) => {
     }
   })
 })
-
-
-*/
 
 module.exports = router

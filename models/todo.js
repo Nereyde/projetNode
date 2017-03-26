@@ -37,34 +37,15 @@ module.exports = {
   },
 
   changeState: (todoId) => {        //Change l'état d'un todo à Complété s'il ne l'est pas, et à non complété s'il l'était.
-    console.log("todoId = ")
-    console.log(todoId)
-    Todo.findOne({todoId: todoId}, function(err, todo) {    //Permet de récupérer le todo grâce à son ID passé en paramètre
-      console.log("todo.completed = ")
-      console.log(todo.completed)
-
-      if(todo.completed){         
-        console.log("test 1")
-        return Todo.update(
-          {todoId: todoId},
-          {$set: {  
-            completed: false,
-            completedAt: null,
-            updatedAt: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')   //Ici, j'ai juste reformater la date pour qu'elle soit plus jolie.
-          }}
-        )
-      }else{
-        console.log("test 2")
-        return Todo.update(
-          {todoId: todoId},
-          {$set: {
-            completed: true,
-            completedAt: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-            updatedAt: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-          }}
-        ) 
-      }
-    })
+    return Todo.update(
+      {todoId: todoId},
+      {$set: {
+        completed: true,
+        completedAt: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+        updatedAt: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+      }},
+      {upsert: true}
+    )
   },
 
   deleteByUserId: (userId) => {                  //Supprime les todos d'un utilsateur

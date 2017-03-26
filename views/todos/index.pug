@@ -11,12 +11,12 @@ block content
         th UserId
         th Topic
 
-      each todo in listNotCompleted
+      each todos in listNotCompleted
         tr
           td
-            input(type='checkbox' name="completed" value=todo.todoId)
-          td= todo.userId
-          td= todo.topic
+            input(type='checkbox' name="completed" value=todos.todoId)
+          td= todos.userId
+          td= todos.topic
 
     input(type='submit', value='Marquer comme fini')        
 
@@ -27,13 +27,13 @@ block content
         th UserId
         th Topic
         th completedAt    
-      each todo in listCompleted
+      each todos in listCompleted
         tr
           td
-            input(type='checkbox' name="completed" value=todo.todoId)
-          td= todo.userId
-          td= todo.topic
-          td= todo.completedAt
+            input(type='checkbox' name="completed" value=todos.todoId)
+          td= todos.userId
+          td= todos.topic
+          td= todos.completedAt
 
     input(type='submit', value='Marquer comme non fini')
 
