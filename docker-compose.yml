@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db-mongo:
+    image: mvertes/alpine-mongo:latest
+    networks:
+      - back-tier
+    volumes:
+      - db-data:/data/db
+  backend:
+    build: .
+    volumes:
+      - .:/app
+      - dependencies:/app/node_modules
+    ports:
+      - "3003:3000"
+    links:
+      - db-mongo
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - MONGO_HOST=db-mongo
+    networks:
+      - front-tier
+      - back-tier
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
+volumes:
+  dependencies:
+  db-data:
